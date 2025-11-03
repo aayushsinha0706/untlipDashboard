@@ -1,0 +1,341 @@
+import supportImg from './assets/file.svg'
+import React, { useState } from 'react';
+import { 
+  LayoutDashboard, 
+  ShoppingBag, 
+  Users, 
+  BarChart3, 
+  Wallet, 
+  HelpCircle, 
+  MessageSquare, 
+  LogOut,
+  Calendar,
+  Package,
+  DollarSign,
+  Activity,
+  Menu,
+  Search,
+  Bell
+} from 'lucide-react';
+
+
+type OrderStatus = 'Delivered' | 'Cancelled' | 'Pending';
+type TabType = 'All Orders' | 'Pending Orders' | 'Delivered Orders' | 'Booked Orders' | 'Cancelled Orders';
+
+interface Order {
+  id: string;
+  date: string;
+  product: string;
+  price: number;
+  status: OrderStatus;
+}
+
+// Data
+const Orders: Order[] = [
+  { id: '#123245', date: '14-12-2020', product: 'Decorative box', price: 125, status: 'Delivered' },
+  { id: '#678457', date: '13-12-2020', product: 'Plantation box', price: 120, status: 'Cancelled' },
+  { id: '#123245', date: '12-12-2020', product: 'Camera film', price: 156, status: 'Delivered' },
+  { id: '#123245', date: '12-12-2020', product: 'Camera film', price: 156, status: 'Delivered' },
+  { id: '#87245', date: '10-12-2020', product: 'Visual lace', price: 125, status: 'Delivered' },
+  { id: '#273245', date: '11-11-2020', product: 'Decorative box', price: 180, status: 'Pending' },
+  { id: '#789245', date: '10-11-2020', product: 'Decorative box', price: 190, status: 'Delivered' },
+];
+
+
+const Sidebar: React.FC = () => {
+  const navItems = [
+    { icon: LayoutDashboard, label: 'Dashboard', active: false },
+    { icon: ShoppingBag, label: 'Orders', active: true },
+    { icon: Users, label: 'Clients', active: false },
+    { icon: BarChart3, label: 'Statistics', active: false },
+    { icon: Wallet, label: 'Finance', active: false },
+    { icon: HelpCircle, label: 'FAQ', active: false },
+    { icon: MessageSquare, label: 'Support', active: false },
+    { icon: LogOut, label: 'Log Out', active: false },
+  ];
+
+  return (
+    <aside className="w-56 bg-white p-4 flex flex-col">
+      <div className="flex items-center gap-2 mb-8 px-2">
+        <div className="w-8 h-8 bg-gray-900 rounded-lg flex items-center justify-center">
+          <Menu className="w-5 h-5 text-white" />
+        </div>
+        <span className="text-xl font-bold">untlip</span>
+      </div>
+
+      <nav className="flex-1 space-y-1">
+        {navItems.map((item) => (
+          <button
+            key={item.label}
+            className={`w-full flex items-center gap-3 px-4 py-2.5 rounded-lg transition ${
+              item.active
+                ? 'bg-indigo-600 text-white'
+                : 'text-gray-600 hover:bg-gray-50'
+            }`}
+          >
+            <item.icon className="w-5 h-5" />
+            <span>{item.label}</span>
+          </button>
+        ))}
+      </nav>
+
+      <UpgradeCard />
+    </aside>
+  );
+};
+
+const UpgradeCard: React.FC = () => (
+  <div className="mt-auto">
+    <div className="bg-gradient-to-br from-orange-100 to-pink-100 rounded-xl p-4 mb-4">
+      <div className="w-24 h-24 mx-auto mb-3 bg-gray-200 rounded-lg flex items-center justify-center">
+        <img src={supportImg} alt="Support" className="w-24 h-24 mx-auto mb-3" />
+      </div>
+      <h3 className="font-semibold text-gray-900 mb-1">Upgrade</h3>
+      <p className="text-sm text-gray-600 mb-2">your plan →</p>
+    </div>
+  </div>
+);
+
+const Header: React.FC = () => (
+  <header className="flex items-center justify-between mb-8">
+    <div className="flex items-center gap-2">
+      <Calendar className="w-5 h-5 text-indigo-600" />
+      <span className="text-gray-700 font-medium">October 19, 2021</span>
+    </div>
+    <div className="flex items-center gap-4">
+      <div className="relative">
+        <input
+          type="text"
+          placeholder="Search by date, name or ID..."
+          className="pl-10 pr-4 py-2 border border-gray-200 rounded-lg w-80 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+        />
+        <Search className="w-5 h-5 text-gray-400 absolute left-3 top-2.5" />
+      </div>
+      <button className="p-2 hover:bg-gray-100 rounded-lg relative">
+        <Bell className="w-5 h-5 text-gray-600" />
+        <span className="absolute top-1 right-1 w-2 h-2 bg-green-500 rounded-full"></span>
+      </button>
+      <div className="w-10 h-10 rounded-full bg-gradient-to-br from-indigo-400 to-purple-400 flex items-center justify-center text-white font-semibold relative">
+        U
+        <span className="absolute top-0 right-0 w-3 h-3 bg-green-500 rounded-full border-2 border-white"></span>
+      </div>
+    </div>
+  </header>
+);
+
+interface OrdersHeaderProps {
+  activeView: 'Daily' | 'Monthly';
+  onViewChange: (view: 'Daily' | 'Monthly') => void;
+}
+
+const OrdersHeader: React.FC<OrdersHeaderProps> = ({ activeView, onViewChange }) => (
+  <div className="flex items-center gap-3 mb-6">
+    <h1 className="text-4xl font-bold text-gray-900">Orders</h1>
+    <span className="text-2xl">😍</span>
+    <div className="ml-auto flex gap-2">
+      <button
+        onClick={() => onViewChange('Daily')}
+        className={`px-6 py-2 rounded-lg font-medium transition ${
+          activeView === 'Daily'
+            ? 'bg-gray-900 text-white'
+            : 'bg-white text-gray-600 hover:bg-gray-50'
+        }`}
+      >
+        Daily
+      </button>
+      <button
+        onClick={() => onViewChange('Monthly')}
+        className={`px-6 py-2 rounded-lg font-medium transition ${
+          activeView === 'Monthly'
+            ? 'bg-gray-900 text-white'
+            : 'bg-white text-gray-600 hover:bg-gray-50'
+        }`}
+      >
+        Monthly
+      </button>
+    </div>
+  </div>
+);
+
+interface StatCardProps {
+  title: string;
+  value: number;
+  percentage: number;
+  bgColor: string;
+  textColor: string;
+}
+
+const StatCard: React.FC<StatCardProps> = ({ title, value, percentage, bgColor, textColor }) => (
+  <div className={`${bgColor} rounded-2xl p-6`}>
+    <h3 className="text-gray-600 font-medium mb-2">{title}</h3>
+    <div className="flex items-center gap-4">
+      <span className={`text-4xl font-bold ${textColor}`}>{value}</span>
+      <div className="flex items-center gap-2 text-sm">
+        <span className="text-gray-600">Impression</span>
+        <span className="text-gray-400">·</span>
+        <span className="font-semibold">{percentage}%</span>
+        <Activity className="w-4 h-4 text-gray-600" />
+      </div>
+    </div>
+  </div>
+);
+
+const StatsCards: React.FC = () => (
+  <div className="grid grid-cols-3 gap-6 mb-8">
+    <StatCard
+      title="New Orders"
+      value={245}
+      percentage={20}
+      bgColor="bg-blue-50"
+      textColor="text-blue-600"
+    />
+    <StatCard
+      title="Pending Orders"
+      value={123}
+      percentage={11}
+      bgColor="bg-purple-50"
+      textColor="text-purple-600"
+    />
+    <StatCard
+      title="Delivered Orders"
+      value={150}
+      percentage={18}
+      bgColor="bg-orange-50"
+      textColor="text-orange-600"
+    />
+  </div>
+);
+
+interface TabsProps {
+  activeTab: TabType;
+  onTabChange: (tab: TabType) => void;
+}
+
+const Tabs: React.FC<TabsProps> = ({ activeTab, onTabChange }) => {
+  const tabs: TabType[] = ['All Orders', 'Pending Orders', 'Delivered Orders', 'Booked Orders', 'Cancelled Orders'];
+
+  return (
+    <div className="flex gap-6 mb-6 border-b border-gray-200">
+      {tabs.map((tab) => (
+        <button
+          key={tab}
+          onClick={() => onTabChange(tab)}
+          className={`pb-3 font-medium transition relative ${
+            activeTab === tab ? 'text-gray-900' : 'text-gray-500 hover:text-gray-700'
+          }`}
+        >
+          {tab}
+          {activeTab === tab && (
+            <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-indigo-600"></div>
+          )}
+        </button>
+      ))}
+    </div>
+  );
+};
+
+const getStatusColor = (status: OrderStatus): string => {
+  switch (status) {
+    case 'Delivered':
+      return 'text-green-600';
+    case 'Cancelled':
+      return 'text-red-600';
+    case 'Pending':
+      return 'text-gray-600';
+    default:
+      return 'text-gray-600';
+  }
+};
+
+const StatusIcon: React.FC<{ status: OrderStatus }> = ({ status }) => (
+  <div className={`flex items-center gap-2 ${getStatusColor(status)}`}>
+    <div className="w-4 h-4 rounded-full border-2 border-current flex items-center justify-center">
+      {status === 'Delivered' && <div className="w-2 h-2 rounded-full bg-current"></div>}
+      {status === 'Cancelled' && <div className="text-xs">×</div>}
+      {status === 'Pending' && <div className="w-2 h-2 rounded-full bg-current"></div>}
+    </div>
+    <span className="font-medium">{status}</span>
+  </div>
+);
+
+interface OrdersTableProps {
+  orders: Order[];
+}
+
+const OrdersTable: React.FC<OrdersTableProps> = ({ orders }) => (
+  <div className="bg-white rounded-2xl shadow-sm overflow-hidden">
+    <table className="w-full">
+      <thead>
+        <tr className="border-b border-gray-200">
+          <th className="text-left py-4 px-6 text-gray-600 font-semibold">
+            <div className="flex items-center gap-2">
+              <Menu className="w-4 h-4" />
+              Order ID
+            </div>
+          </th>
+          <th className="text-left py-4 px-6 text-gray-600 font-semibold">
+            <div className="flex items-center gap-2">
+              <Calendar className="w-4 h-4 text-orange-500" />
+              Ordered Date
+            </div>
+          </th>
+          <th className="text-left py-4 px-6 text-gray-600 font-semibold">
+            <div className="flex items-center gap-2">
+              <Package className="w-4 h-4 text-blue-500" />
+              Product Name
+            </div>
+          </th>
+          <th className="text-left py-4 px-6 text-gray-600 font-semibold">
+            <div className="flex items-center gap-2">
+              <DollarSign className="w-4 h-4 text-green-500" />
+              Product Price
+            </div>
+          </th>
+          <th className="text-left py-4 px-6 text-gray-600 font-semibold">
+            <div className="flex items-center gap-2">
+              <Activity className="w-4 h-4" />
+              Status
+            </div>
+          </th>
+        </tr>
+      </thead>
+      <tbody>
+        {orders.map((order, index) => (
+          <tr
+            key={`${order.id}-${index}`}
+            className="border-b border-gray-100 hover:bg-gray-50 transition"
+          >
+            <td className="py-4 px-6 font-medium text-gray-900">{order.id}</td>
+            <td className="py-4 px-6 text-gray-600">{order.date}</td>
+            <td className="py-4 px-6 text-gray-900">{order.product}</td>
+            <td className="py-4 px-6 font-semibold text-gray-900">{order.price} USD</td>
+            <td className="py-4 px-6">
+              <StatusIcon status={order.status} />
+            </td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
+  </div>
+);
+
+
+const App: React.FC = () => {
+  const [activeTab, setActiveTab] = useState<TabType>('All Orders');
+  const [activeView, setActiveView] = useState<'Daily' | 'Monthly'>('Daily');
+
+  return (
+    <div className="flex min-h-screen bg-gradient-to-br from-gray-50 to-blue-50">
+      <Sidebar />
+      <main className="flex-1 p-8">
+        <Header />
+        <OrdersHeader activeView={activeView} onViewChange={setActiveView} />
+        <StatsCards />
+        <Tabs activeTab={activeTab} onTabChange={setActiveTab} />
+        <OrdersTable orders={Orders} />
+      </main>
+    </div>
+  );
+};
+
+export default App;
